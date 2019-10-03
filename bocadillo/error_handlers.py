@@ -23,6 +23,8 @@ async def error_to_html(req: Request, res: Response, exc: HTTPError):
     html = f"<h1>{exc.title}</h1>"
     if exc.detail:
         html += f"\n<p>{exc.detail}</p>"
+    if exc.headers:
+        html += f"\n<p>{exc.headers}</p>"
     res.html = html
 
 
@@ -46,6 +48,7 @@ async def error_to_json(req: Request, res: Response, exc: HTTPError):
     ```
     """
     res.status_code = exc.status_code
+    res.headers = exc.headers
     res.json = exc.as_json()
 
 
@@ -65,4 +68,6 @@ async def error_to_text(req: Request, res: Response, exc: HTTPError):
     text = exc.title
     if exc.detail:
         text += f"\n{exc.detail}"
+    if exc.headers:
+        text += f"\n{exc.headers}"
     res.text = text

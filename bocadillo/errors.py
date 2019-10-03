@@ -22,7 +22,10 @@ class HTTPError(Exception):
     __slots__ = ("_status", "detail")
 
     def __init__(
-        self, status: typing.Union[int, HTTPStatus], detail: typing.Any = ""
+        self,
+        status: typing.Union[int, HTTPStatus],
+        detail: typing.Any = "",
+        headers: typing.Dict = None,
     ):
         if isinstance(status, int):
             status = HTTPStatus(  # pylint: disable=no-value-for-parameter
@@ -34,6 +37,7 @@ class HTTPError(Exception):
             ), f"Expected int or HTTPStatus, got {type(status)}"
         self._status = status
         self.detail = detail
+        self.headers = headers
 
     @property
     def status_code(self) -> int:
@@ -54,6 +58,8 @@ class HTTPError(Exception):
         data = {"error": self.title, "status": self.status_code}
         if self.detail:
             data["detail"] = self.detail
+        if self.headers:
+            data["headers"] = self.headers
         return data
 
     def __str__(self):
